@@ -16,6 +16,7 @@ data Song = Song Meta Sheet
 data Meta = Meta
   { metaTitle :: T.Text
   , metaComposer :: T.Text
+  , metaSize :: Integer
   }
 type Sheet = [Notation]
 type Duration = Rational
@@ -127,7 +128,7 @@ formatLilyTie t = if t then "~" else ""
 outputSong :: Song -> T.Text
 outputSong (Song meta sheet) =
   let lilySheet = mconcat $ evalState (sequence (map notationToLilySheet sheet)) Nothing
-  in T.pack $ printf template (metaTitle meta) (metaComposer meta) (lsChords lilySheet) (lsVoice lilySheet)
+  in T.pack $ printf template (metaSize meta) (metaTitle meta) (metaComposer meta) (lsChords lilySheet) (lsVoice lilySheet)
 
 formatLilyTime :: Time -> T.Text
 formatLilyTime (Time a b) = T.pack $ printf "%d/%d" a b
@@ -143,7 +144,7 @@ formatLilyDuration t
 
 template :: String
 template = "\
-  \ #(set-global-staff-size 20) \n \
+  \ #(set-global-staff-size %d) \n \
   \  \n \
   \ \\header { \n \
   \   title = \"%s\" \n \

@@ -40,10 +40,12 @@ pMeta :: Parser Meta
 pMeta = do
   title <- option "" (tok (string "title") *> (anyChar `manyTill` newline))
   composer <- option "" (tok (string "composer") *> (anyChar `manyTill` newline))
+  size <- read <$> option "20" (tok (string "size") *> (digit `manyTill` newline))
 
   return Meta
     { metaTitle = T.pack title
     , metaComposer = T.pack composer
+    , metaSize = size
     }
 
 pSheet :: Parser Sheet
