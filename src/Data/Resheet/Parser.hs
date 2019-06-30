@@ -18,7 +18,8 @@ parseSong name s = runParser (pSong <* eof) (Time 4 4) name s
 
 tok :: Parser a -> Parser a
 tok p = do
-  let space' = space <|> char '|' <|> try (pComment *> return ' ')
+  let barline = try (char '|' >> notFollowedBy (char ':'))
+  let space' = space <|> (barline >> return ' ') <|> try (pComment *> return ' ')
   _ <- many space'
   r <- p
   _ <- many space'
@@ -54,7 +55,19 @@ pNotation = choice
   , try pRehearsalMark
   , try pChord
   , try pLineBreak
+  , try pRepeatOpen
+  , try pRepeatClose
   ]
+
+pRepeatOpen :: Parser Notation
+pRepeatOpen = do
+  _ <- tok (string "|:")
+  return RepeatOpen
+
+pRepeatClose :: Parser Notation
+pRepeatClose = do
+  _ <- tok (string ":|")
+  return RepeatClose
 
 pLineBreak :: Parser Notation
 pLineBreak = do

@@ -34,6 +34,8 @@ data Notation
   | RehearsalMark T.Text
   | Chord Duration TonalChord Voicing HasTie
   | LineBreak
+  | RepeatOpen
+  | RepeatClose
   deriving (Show)
 
 data LilySheet = LilySheet
@@ -79,6 +81,14 @@ notationToLilySheet n = case n of
   LineBreak -> return $ LilySheet
     { lsChords = ""
     , lsVoice = "\\break"
+    }
+  RepeatOpen -> return $ LilySheet
+    { lsChords = "\\bar \"[|:\""
+    , lsVoice = "\\bar \"[|:\""
+    }
+  RepeatClose -> return $ LilySheet
+    { lsChords = "\\bar \":|]\""
+    , lsVoice = "\\bar \":|]\""
     }
 
 formatLilyChord :: Duration -> TonalChord -> T.Text
