@@ -93,14 +93,18 @@ notationToLilySheet n = case n of
     { lsChords = ""
     , lsVoice = "\\break"
     }
-  RepeatOpen -> return $ LilySheet
-    { lsChords = "\\bar \"[|:\""
-    , lsVoice = "\\bar \"[|:\""
-    }
-  RepeatClose -> return $ LilySheet
-    { lsChords = "\\bar \":|]\""
-    , lsVoice = "\\bar \":|]\""
-    }
+  RepeatOpen -> do
+    put Nothing
+    return $ LilySheet
+      { lsChords = "\\bar \"[|:\""
+      , lsVoice = "\\bar \"[|:\""
+      }
+  RepeatClose -> do
+    put Nothing
+    return $ LilySheet
+      { lsChords = "\\bar \":|]\""
+      , lsVoice = "\\bar \":|]\""
+      }
 
 formatLilyChord :: Duration -> TonalChord -> T.Text
 formatLilyChord dur chord = T.pack $
