@@ -52,6 +52,7 @@ pSheet = many1 pNotation
 pNotation :: Parser Notation
 pNotation = choice
   [ try pTimeSignature
+  , try pKeySignature
   , try pRehearsalMark
   , try pChord
   , try pLineBreak
@@ -73,6 +74,13 @@ pLineBreak :: Parser Notation
 pLineBreak = do
   _ <- tok (string "\\\\")
   return LineBreak
+
+pKeySignature :: Parser Notation
+pKeySignature = do
+  tok (string "key")
+  base <- chordBase
+  modifier <- chordMod
+  return (KeySignature (Pitch base modifier))
 
 pTimeSignature :: Parser Notation
 pTimeSignature = do

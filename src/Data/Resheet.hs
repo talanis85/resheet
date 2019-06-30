@@ -31,6 +31,7 @@ data Voicing
 
 data Notation
   = TimeSignature Time
+  | KeySignature Pitch
   | RehearsalMark T.Text
   | Chord Duration TonalChord Voicing HasTie
   | LineBreak
@@ -60,6 +61,10 @@ notationToLilySheet n = case n of
   TimeSignature t -> return $ LilySheet
     { lsChords = ""
     , lsVoice = "\\time " <> formatLilyTime t
+    }
+  KeySignature k -> return $ LilySheet
+    { lsChords = T.pack $ printf "\\key %s \\major" (formatLilyPitch k)
+    , lsVoice = T.pack $ printf "\\key %s \\major" (formatLilyPitch k)
     }
   RehearsalMark m -> return $ LilySheet
     { lsChords = ""
