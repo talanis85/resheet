@@ -23,10 +23,16 @@ type HasTie = Bool
 data Time = Time Integer Integer
   deriving (Show)
 
+data Voicing
+  = VoicingLily T.Text
+  | VoicingPercent
+  | VoicingRest
+  deriving (Show)
+
 data Notation
   = TimeSignature Time
   | RehearsalMark T.Text
-  | Chord Duration TonalChord (Maybe T.Text) HasTie
+  | Chord Duration TonalChord Voicing HasTie
   | LineBreak
   deriving (Show)
 
@@ -58,16 +64,17 @@ notationToLilySheet n = case n of
     , lsVoice = T.pack $ printf "\\mark \\markup { \\box \\bold \"%s\" } " m
     -- this line fixes vim's syntax highlighting "
     }
-  Chord dur chord music hasTie -> do
+  Chord dur chord voicing hasTie -> do
     lastChord <- get
     put (Just chord)
     return $ LilySheet
       { lsChords = if fmap show lastChord == Just (show chord)
           then T.pack $ printf "s%s" (formatLilyDuration dur)
           else formatLilyChord dur chord
-      , lsVoice = case music of
-          Nothing -> T.pack $ printf "c%s%s" (formatLilyDuration dur) (formatLilyTie hasTie)
-          Just music' -> T.pack $ printf "\\improvisationOff %s \\improvisationOn" music'
+      , lsVoice = case voicing of
+          VoicingRest -> T.pack $ printf "c%s%s" (formatLilyDuration dur) (formatLilyTie hasTie)
+          VoicingLily lily -> T.pack $ printf "\\improvisationOff %s \\improvisationOn" lily
+          VoicingPercent -> T.pack $ printf "\\makePercent r%s" (formatLilyDuration dur)
       }
   LineBreak -> return $ LilySheet
     { lsChords = ""

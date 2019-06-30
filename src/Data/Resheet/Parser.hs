@@ -86,14 +86,26 @@ pChord = do
   dur <- tok pDuration
   crd <- tok absChord
   tie <- option False (tok (string "~") *> return True)
-  notes <- optionMaybe (tok $ try pChordNotes)
-  return (Chord dur crd notes tie)
+  voicing <- pVoicing
+  return (Chord dur crd voicing tie)
 
-pChordNotes :: Parser T.Text
-pChordNotes = do
-  _ <- char '['
-  t <- anyChar `manyTill` (try (char ']'))
-  return $ T.pack t
+pVoicing :: Parser Voicing
+pVoicing = choice
+  [ try pVoicingPercent
+  , try pVoicingLily
+  , return VoicingRest
+  ]
+
+pVoicingPercent :: Parser Voicing
+pVoicingPercent = do
+  _ <- tok (char '%')
+  return VoicingPercent
+
+pVoicingLily :: Parser Voicing
+pVoicingLily = do
+  _ <- tok (char '[')
+  t <- anyChar `manyTill` (try (tok (char ']')))
+  return $ VoicingLily $ T.pack t
 
 pDuration :: Parser Duration
 pDuration = choice [ try pLongDuration, pShortDuration ]
