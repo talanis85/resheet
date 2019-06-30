@@ -54,6 +54,7 @@ pNotation = choice
   [ try pTimeSignature
   , try pKeySignature
   , try pRehearsalMark
+  , try pExpressionMark
   , try pChord
   , try pLineBreak
   , try pRepeatOpen
@@ -101,6 +102,12 @@ pRehearsalMark = do
   _ <- tok $ char '<'
   t <- anyChar `manyTill` (try (char '>'))
   return (RehearsalMark (T.pack t))
+
+pExpressionMark :: Parser Notation
+pExpressionMark = do
+  _ <- tok $ char '{'
+  t <- anyChar `manyTill` (try (char '}'))
+  return (ExpressionMark (T.pack t))
 
 pChord :: Parser Notation
 pChord = do

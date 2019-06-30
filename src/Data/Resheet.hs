@@ -33,6 +33,7 @@ data Notation
   = TimeSignature Time
   | KeySignature Pitch
   | RehearsalMark T.Text
+  | ExpressionMark T.Text
   | Chord Duration TonalChord Voicing HasTie
   | LineBreak
   | RepeatOpen
@@ -69,6 +70,11 @@ notationToLilySheet n = case n of
   RehearsalMark m -> return $ LilySheet
     { lsChords = ""
     , lsVoice = T.pack $ printf "\\mark \\markup { \\box \\bold \"%s\" } " m
+    -- this line fixes vim's syntax highlighting "
+    }
+  ExpressionMark m -> return $ LilySheet
+    { lsChords = "\\cadenzaOn s16 \\cadenzaOff"
+    , lsVoice = T.pack $ printf "\\cadenzaOn s16^\\markup { \\italic \"%s\" } \\cadenzaOff " m
     -- this line fixes vim's syntax highlighting "
     }
   Chord dur chord voicing hasTie -> do
