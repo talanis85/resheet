@@ -129,17 +129,20 @@ pVoicingLily = do
   return $ VoicingLily $ T.pack t
 
 pDuration :: Parser Duration
-pDuration = choice [ try pLongDuration, pShortDuration ]
-  where
-    pLongDuration = do
-      a <- read <$> many1 digit
-      _ <- char '/'
-      b <- read <$> many1 digit
-      return (a % b)
-    pShortDuration = do
-      a <- read <$> many1 digit
-      Time _ b <- getState
-      return (a % b)
+pDuration = do
+  a <- read <$> choice
+    [ try $ string "64"
+    , try $ string "32"
+    , try $ string "16"
+    , try $ string "8"
+    , try $ string "4"
+    , try $ string "2"
+    , try $ string "1"
+    ]
+  b <- option (1 % a) $ do
+    _ <- char '.'
+    return ((1 % a) * (3 % 2))
+  return b
 
 absChord = do
   base <- chordBase
