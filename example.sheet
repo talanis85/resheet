@@ -1,0 +1,24 @@
+title Resheet Example
+composer Public Domain
+size 20
+
+time 4/4
+key D
+
+1 Em7 | 2 A7 2 Dmaj7 | 1 Em7 | 2 A7 2 Dmaj7 \\
+
+|:
+<Verse>
+1 Bm | 1 Gmaj7 | 1 A7 | 1 Bm \\
+1 C#m7b5 | 1 Dmaj7 | 1 Em7 | 1 A7 \\
+
+<Chorus>
+2 C 2 G/B | 4 D 4 D~ 2 D | 2 C 2 G/B | 1 D | 2 C 2 G/B | 1 Em | {decrescendo} 1 A7~ | 1 A7 \\
+:|
+
+<Interlude>
+1 Em [e'8 g' b' g' e' g' b' g'] | 1 Bm % | 1 Em % | 1 Bm % \\
+1 Em % | 1 Bm % | 1 Em % | 1 A7 % \\
+
+<Chorus>
+2 C 2 G/B | 4 D 4 D~ 2 D | 2 C 2 G/B | 1 D | 2 C 2 G/B | 1 Em | 1 A7 | 1 Dmaj7 \\
