@@ -58,7 +58,18 @@ instance Monoid LilySheet where
     , lsVoice = mempty
     }
 
-notationToLilySheet :: Notation -> State (Maybe TonalChord) LilySheet
+data NotationState = NotationState
+  { nsLastChord :: Maybe TonalChord
+  , nsAfterClosingRepeat :: Bool
+  }
+
+mkNotationState :: NotationState
+mkNotationState = NotationState
+  { nsLastChord = Nothing
+  , nsAfterClosingRepeat = False
+  }
+
+notationToLilySheet :: Notation -> State NotationState LilySheet
 notationToLilySheet n = case n of
   TimeSignature t -> return $ LilySheet
     { lsChords = ""
@@ -79,8 +90,9 @@ notationToLilySheet n = case n of
     -- this line fixes vim's syntax highlighting "
     }
   Chord dur chord voicing hasTie -> do
-    lastChord <- get
-    put (Just chord)
+    lastChord <- gets nsLastChord
+    modify $ \s -> s { nsLastChord = Just chord }
+    modify $ \s -> s { nsAfterClosingRepeat = False }
     return $ LilySheet
       { lsChords = if fmap show lastChord == Just (show chord)
           then T.pack $ printf "s%s" (formatLilyDuration dur)
@@ -95,13 +107,21 @@ notationToLilySheet n = case n of
     , lsVoice = "\\break"
     }
   RepeatOpen -> do
-    put Nothing
-    return $ LilySheet
-      { lsChords = "\\bar \"[|:\""
-      , lsVoice = "\\bar \"[|:\""
-      }
+    closingRepeat <- gets nsAfterClosingRepeat
+    modify $ \s -> s { nsLastChord = Nothing }
+    modify $ \s -> s { nsAfterClosingRepeat = False }
+    if closingRepeat
+       then return $ LilySheet
+         { lsChords = "\\bar \":|][|:\""
+         , lsVoice = "\\bar \":|][|:\""
+         }
+       else return $ LilySheet
+         { lsChords = "\\bar \"[|:\""
+         , lsVoice = "\\bar \"[|:\""
+         }
   RepeatClose -> do
-    put Nothing
+    modify $ \s -> s { nsLastChord = Nothing }
+    modify $ \s -> s { nsAfterClosingRepeat = True }
     return $ LilySheet
       { lsChords = "\\bar \":|]\""
       , lsVoice = "\\bar \":|]\""
@@ -127,7 +147,7 @@ formatLilyTie t = if t then "~" else ""
 
 outputSong :: Song -> T.Text
 outputSong (Song meta sheet) =
-  let lilySheet = mconcat $ evalState (sequence (map notationToLilySheet sheet)) Nothing
+  let lilySheet = mconcat $ evalState (sequence (map notationToLilySheet sheet)) mkNotationState
   in T.pack $ printf template (metaSize meta) (metaTitle meta) (metaComposer meta) (lsChords lilySheet) (lsVoice lilySheet)
 
 formatLilyTime :: Time -> T.Text
