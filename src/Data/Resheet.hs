@@ -192,12 +192,16 @@ formatLilyChordType c =
 lilyChordTypes =
   [ ( [Degree I natural, Degree III natural, Degree V natural], "" )
   , ( [Degree I natural, Degree III flat, Degree V natural], "m" )
+  , ( [Degree I natural, Degree III natural, Degree V sharp], "aug" )
+  , ( [Degree I natural, Degree III flat, Degree V flat], "dim" )
+  , ( [Degree I natural, Degree III natural, Degree V natural, Degree VII flat], "7" )
   , ( [Degree I natural, Degree III natural, Degree V natural, Degree VII natural], "maj7" )
   , ( [Degree I natural, Degree III flat, Degree V natural, Degree VII flat], "m7" )
+  , ( [Degree I natural, Degree III flat, Degree V flat, Degree VII (flat Scales.<+> flat)], "dim7" )
+  , ( [Degree I natural, Degree III natural, Degree V sharp, Degree VII flat], "aug7" )
+  , ( [Degree I natural, Degree III flat, Degree V flat, Degree VII flat], "m7.5-" )
   , ( [Degree I natural, Degree III flat, Degree V natural, Degree VII natural], "m7+" )
-  , ( [Degree I natural, Degree III flat, Degree V flat, Degree VII natural], "m7b5" )
-  , ( [Degree I natural, Degree III flat, Degree V flat], "dim" )
-  , ( [Degree I natural, Degree III flat, Degree V flat, Degree VII flat], "dim" )
+  , ( [Degree I natural, Degree III flat, Degree V natural, Degree VII flat], "m7" )
   ]
 
 formatLilyPitch :: Pitch -> T.Text
