@@ -30,6 +30,9 @@ data Voicing
   | VoicingRest
   deriving (Show)
 
+data Clef = TrebleClef | BassClef
+  deriving (Show)
+
 data Notation
   = TimeSignature Time
   | KeySignature Pitch
@@ -39,6 +42,7 @@ data Notation
   | LineBreak
   | RepeatOpen
   | RepeatClose
+  | ClefChange Clef
   deriving (Show)
 
 data LilySheet = LilySheet
@@ -125,6 +129,14 @@ notationToLilySheet n = case n of
     return $ LilySheet
       { lsChords = "\\bar \":|]\""
       , lsVoice = "\\bar \":|]\""
+      }
+  ClefChange clef ->
+    let clefName = case clef of
+          TrebleClef -> "treble"
+          BassClef -> "bass"
+    in return $ LilySheet
+      { lsChords = ""
+      , lsVoice = "\\clef " <> clefName
       }
 
 formatLilyChord :: Duration -> TonalChord -> T.Text

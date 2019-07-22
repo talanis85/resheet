@@ -61,6 +61,7 @@ pNotation = choice
   , try pLineBreak
   , try pRepeatOpen
   , try pRepeatClose
+  , try pClefChange
   ]
 
 pRepeatOpen :: Parser Notation
@@ -72,6 +73,16 @@ pRepeatClose :: Parser Notation
 pRepeatClose = do
   _ <- tok (string ":|")
   return RepeatClose
+
+pClefChange :: Parser Notation
+pClefChange = ClefChange <$> choice
+  [ do
+      tok (string "treble")
+      return TrebleClef
+  , do
+      tok (string "bass")
+      return BassClef
+  ]
 
 pLineBreak :: Parser Notation
 pLineBreak = do
