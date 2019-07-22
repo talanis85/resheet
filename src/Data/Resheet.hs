@@ -43,6 +43,7 @@ data Notation
   | RepeatOpen
   | RepeatClose
   | ClefChange Clef
+  | MarkReference T.Text
   deriving (Show)
 
 data LilySheet = LilySheet
@@ -137,6 +138,12 @@ notationToLilySheet n = case n of
     in return $ LilySheet
       { lsChords = ""
       , lsVoice = "\\clef " <> clefName
+      }
+  MarkReference text -> do
+    return $ LilySheet
+      { lsChords = ""
+      , lsVoice = T.pack $ printf "\\cadenzaOn \\once \\override TextScript #'extra-offset = #'(0 . -4) s2^\\markup { \\whiteout \\box \\box \\large \\bold \"%s\" } \\cadenzaOff \\bar \"|\"" text
+      -- this line fixes vim's syntax highlighting "
       }
 
 formatLilyChord :: Duration -> TonalChord -> T.Text

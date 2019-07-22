@@ -55,6 +55,7 @@ pNotation :: Parser Notation
 pNotation = choice
   [ try pTimeSignature
   , try pKeySignature
+  , try pMarkReference
   , try pRehearsalMark
   , try pExpressionMark
   , try pChord
@@ -83,6 +84,12 @@ pClefChange = ClefChange <$> choice
       tok (string "bass")
       return BassClef
   ]
+
+pMarkReference :: Parser Notation
+pMarkReference = tok $ do
+  _ <- string "<<"
+  t <- anyChar `manyTill` (try (string ">>"))
+  return (MarkReference (T.pack t))
 
 pLineBreak :: Parser Notation
 pLineBreak = do
