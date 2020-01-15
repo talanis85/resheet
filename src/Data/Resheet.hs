@@ -141,7 +141,7 @@ notationToLilySheet n = case n of
       }
   MarkReference text -> do
     return $ LilySheet
-      { lsChords = ""
+      { lsChords = "s2"
       , lsVoice = T.pack $ printf "\\cadenzaOn \\once \\override TextScript #'extra-offset = #'(0 . -4) s2^\\markup { \\whiteout \\box \\box \\large \\bold \"%s\" } \\cadenzaOff \\bar \"|\"" text
       -- this line fixes vim's syntax highlighting "
       }
